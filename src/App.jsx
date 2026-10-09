@@ -1,46 +1,78 @@
-import { useState } from "react"
-
-const recipes = [
-  {
-    idMeal: "1",
-    strMeal: "Spaghetti Carbonara",
-    strMealThumb:
-      "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    idMeal: "2",
-    strMeal: "Fresh Garden Salad",
-    strMealThumb:
-      "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    idMeal: "3",
-    strMeal: "Vegetable Bowl",
-    strMealThumb:
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
-  },
-]
+import { useEffect, useState } from "react"
 
 export default function App() {
+  const [recipes, setRecipes] = useState([])
   const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    let isActive = true
+
+    async function fetchRecipes() {
+      try {
+        const response = await fetch(
+          "https://www.themealdb.com/api/json/v1/1/search.php?s=pasta",
+        )
+
+        if (!response.ok) {
+          throw new Error("Unable to load recipes. Please try again.")
+        }
+
+        const data = await response.json()
+        if (isActive) {
+          setRecipes(data.meals ?? [])
+        }
+      } catch (fetchError) {
+        if (isActive) {
+          setError(fetchError.message || "Unable to load recipes.")
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    fetchRecipes()
+
+    return () => {
+      isActive = false
+    }
+  }, [])
+
+  const ingredients = selectedRecipe
+    ? Array.from({ length: 20 }, (_, index) => {
+        const ingredient = selectedRecipe[`strIngredient${index + 1}`]?.trim()
+        const measure = selectedRecipe[`strMeasure${index + 1}`]?.trim()
+
+        return ingredient ? { ingredient, measure } : null
+      }).filter(Boolean)
+    : []
 
   return (
     <main className="app">
       <h1>Recipe Book</h1>
-      <ul>
-        {recipes.map((recipe) => (
-          <li key={recipe.idMeal}>
-            <button
-              type="button"
-              onClick={() => setSelectedRecipe(recipe)}
-              aria-pressed={selectedRecipe?.idMeal === recipe.idMeal}
-            >
-              <img src={recipe.strMealThumb} alt={recipe.strMeal} />
-              <h2>{recipe.strMeal}</h2>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p role="alert">{error}</p>
+      ) : (
+        <ul>
+          {recipes.map((recipe) => (
+            <li key={recipe.idMeal}>
+              <button
+                type="button"
+                onClick={() => setSelectedRecipe(recipe)}
+                aria-pressed={selectedRecipe?.idMeal === recipe.idMeal}
+              >
+                <img src={recipe.strMealThumb} alt={recipe.strMeal} />
+                <h2>{recipe.strMeal}</h2>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <section aria-live="polite">
         <h2>Recipe Details</h2>
@@ -54,9 +86,21 @@ export default function App() {
               alt={selectedRecipe.strMeal}
             />
             <h4>Ingredients</h4>
-            <p>Gather your favorite fresh ingredients for this recipe.</p>
+            {ingredients.length > 0 ? (
+              <ul>
+                {ingredients.map(({ ingredient, measure }, index) => (
+                  <li key={`${ingredient}-${index}`}>
+                    {measure ? `${measure} ` : ""}{ingredient}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No ingredients listed.</p>
+            )}
             <h4>Instructions</h4>
-            <p>Prepare the ingredients, cook until ready, and serve fresh.</p>
+            <p>
+              {selectedRecipe.strInstructions || "No instructions available."}
+            </p>
           </article>
         )}
       </section>
