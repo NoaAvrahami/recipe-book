@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 const recipes = [
   {
     idMeal: "1",
@@ -20,17 +22,44 @@ const recipes = [
 ]
 
 export default function App() {
+  const [selectedRecipe, setSelectedRecipe] = useState(null)
+
   return (
     <main className="app">
       <h1>Recipe Book</h1>
       <ul>
         {recipes.map((recipe) => (
           <li key={recipe.idMeal}>
-            <img src={recipe.strMealThumb} alt={recipe.strMeal} />
-            <h2>{recipe.strMeal}</h2>
+            <button
+              type="button"
+              onClick={() => setSelectedRecipe(recipe)}
+              aria-pressed={selectedRecipe?.idMeal === recipe.idMeal}
+            >
+              <img src={recipe.strMealThumb} alt={recipe.strMeal} />
+              <h2>{recipe.strMeal}</h2>
+            </button>
           </li>
         ))}
       </ul>
+
+      <section aria-live="polite">
+        <h2>Recipe Details</h2>
+        {selectedRecipe === null ? (
+          <p>Please select a recipe.</p>
+        ) : (
+          <article>
+            <h3>{selectedRecipe.strMeal}</h3>
+            <img
+              src={selectedRecipe.strMealThumb}
+              alt={selectedRecipe.strMeal}
+            />
+            <h4>Ingredients</h4>
+            <p>Gather your favorite fresh ingredients for this recipe.</p>
+            <h4>Instructions</h4>
+            <p>Prepare the ingredients, cook until ready, and serve fresh.</p>
+          </article>
+        )}
+      </section>
     </main>
   )
 }
