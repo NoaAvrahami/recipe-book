@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import "./App.css"
 
 export default function App() {
   const [recipes, setRecipes] = useState([])
@@ -53,74 +54,125 @@ export default function App() {
 
   return (
     <main className="app">
-      <h1>Recipe Book</h1>
-      <label htmlFor="recipe-search">Search recipes</label>
-      <input
-        id="recipe-search"
-        type="search"
-        value={searchQuery}
-        onChange={(event) => {
-          setSearchQuery(event.target.value)
-          setIsLoading(true)
-          setError("")
-          setSelectedRecipe(null)
-        }}
-      />
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p role="alert">{error}</p>
-      ) : (
-        recipes.length === 0 ? (
-          <p>No recipes found</p>
-        ) : (
-          <ul>
-            {recipes.map((recipe) => (
-              <li key={recipe.idMeal}>
-                <button
-                  type="button"
-                  onClick={() => setSelectedRecipe(recipe)}
-                  aria-pressed={selectedRecipe?.idMeal === recipe.idMeal}
-                >
-                  <img src={recipe.strMealThumb} alt={recipe.strMeal} />
-                  <h2>{recipe.strMeal}</h2>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )
-      )}
+      <header className="app-header">
+        <p className="eyebrow">A little inspiration for your kitchen</p>
+        <h1>Recipe Book</h1>
+        <p className="app-description">
+          Find something delicious to make today.
+        </p>
+        <div className="search-field">
+          <label htmlFor="recipe-search">Search recipes</label>
+          <input
+            id="recipe-search"
+            type="search"
+            placeholder="Try pasta, chicken, or soup..."
+            value={searchQuery}
+            onChange={(event) => {
+              setSearchQuery(event.target.value)
+              setIsLoading(true)
+              setError("")
+              setSelectedRecipe(null)
+            }}
+          />
+        </div>
+      </header>
 
-      <section aria-live="polite">
-        <h2>Recipe Details</h2>
-        {selectedRecipe === null ? (
-          <p>Please select a recipe.</p>
-        ) : (
-          <article>
-            <h3>{selectedRecipe.strMeal}</h3>
-            <img
-              src={selectedRecipe.strMealThumb}
-              alt={selectedRecipe.strMeal}
-            />
-            <h4>Ingredients</h4>
-            {ingredients.length > 0 ? (
-              <ul>
-                {ingredients.map(({ ingredient, measure }, index) => (
-                  <li key={`${ingredient}-${index}`}>
-                    {measure ? `${measure} ` : ""}{ingredient}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No ingredients listed.</p>
+      <div className="recipe-layout">
+        <section className="panel recipe-list-panel" aria-labelledby="recipes-title">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Browse</p>
+              <h2 id="recipes-title">Recipes</h2>
+            </div>
+            {!isLoading && !error && recipes.length > 0 && (
+              <span className="recipe-count">
+                {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
+              </span>
             )}
-            <h4>Instructions</h4>
-            <p>
-              {selectedRecipe.strInstructions || "No instructions available."}
+          </div>
+
+          {isLoading ? (
+            <p className="state-message loading-state" role="status">
+              <span className="loading-spinner" aria-hidden="true" />
+              Loading recipes...
             </p>
-          </article>
-        )}
-      </section>
+          ) : error ? (
+            <p className="state-message error-state" role="alert">
+              {error}
+            </p>
+          ) : recipes.length === 0 ? (
+            <p className="state-message empty-state">No recipes found</p>
+          ) : (
+            <ul className="recipe-list">
+              {recipes.map((recipe) => (
+                <li key={recipe.idMeal}>
+                  <button
+                    className={`recipe-card${selectedRecipe?.idMeal === recipe.idMeal ? " is-selected" : ""}`}
+                    type="button"
+                    onClick={() => setSelectedRecipe(recipe)}
+                    aria-pressed={selectedRecipe?.idMeal === recipe.idMeal}
+                  >
+                    <img src={recipe.strMealThumb} alt="" />
+                    <span className="recipe-card-copy">
+                      <span className="recipe-card-name">{recipe.strMeal}</span>
+                      <span className="recipe-card-action">View recipe</span>
+                    </span>
+                    <span className="recipe-card-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section
+          className="panel details-panel"
+          aria-live="polite"
+          aria-labelledby="details-title"
+        >
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Make it yours</p>
+              <h2 id="details-title">Recipe Details</h2>
+            </div>
+          </div>
+          {selectedRecipe === null ? (
+            <div className="detail-placeholder">
+              <span className="placeholder-icon" aria-hidden="true">✳</span>
+              <h3>Your next favorite</h3>
+              <p>Select a recipe to see its ingredients and instructions.</p>
+            </div>
+          ) : (
+            <article className="recipe-details">
+              <img
+                className="detail-image"
+                src={selectedRecipe.strMealThumb}
+                alt={selectedRecipe.strMeal}
+              />
+              <h3>{selectedRecipe.strMeal}</h3>
+              <h4>Ingredients</h4>
+              {ingredients.length > 0 ? (
+                <ul className="ingredient-list">
+                  {ingredients.map(({ ingredient, measure }, index) => (
+                    <li key={`${ingredient}-${index}`}>
+                      <span>{ingredient}</span>
+                      {measure && <span className="ingredient-measure">{measure}</span>}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="detail-copy">No ingredients listed.</p>
+              )}
+              <h4>Instructions</h4>
+              <p className="instruction-copy">
+                {selectedRecipe.strInstructions || "No instructions available."}
+              </p>
+            </article>
+          )}
+        </section>
+      </div>
     </main>
   )
 }
