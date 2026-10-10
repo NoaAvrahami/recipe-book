@@ -361,6 +361,31 @@ input {
   white-space: pre-line;
 }
 
+.youtube-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.35rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #a83f35;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.youtube-link:hover {
+  transform: translateY(-1px);
+  background: #8f3028;
+}
+
+.youtube-link:focus-visible {
+  outline: 3px solid rgb(168 63 53 / 35%);
+  outline-offset: 3px;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

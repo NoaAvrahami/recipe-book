@@ -169,6 +169,16 @@ export default function App() {
               <p className="instruction-copy">
                 {selectedRecipe.strInstructions || "No instructions available."}
               </p>
+              {selectedRecipe.strYoutube?.trim() && (
+                <a
+                  className="youtube-link"
+                  href={selectedRecipe.strYoutube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Watch on YouTube <span aria-hidden="true">↗</span>
+                </a>
+              )}
             </article>
           )}
         </section>
