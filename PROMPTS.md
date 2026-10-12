@@ -38,3 +38,8 @@ I checked: Resized the browser window and verified the layout stacks vertically 
 Prompt: The instructor requested that a YouTube video link be displayed. Please check if selectedRecipe.strYoutube exists and add a link at the bottom.
 Agent did: Added an <a> tag pointing to the YouTube URL that opens in a new tab.
 I checked: Clicked the "Watch on YouTube" button in the details panel and verified it opened the correct video.
+
+## Bonus: LocalStorage Favorites
+Prompt: I want to add a bonus feature: saving favorite recipes using localStorage. Please add a favorites state, sync it with useEffect, and add a toggle button in the details panel.
+Agent did: Added state initialized from localStorage, a save effect, and a heart button to toggle favorites.
+I checked: Clicked the favorite button on a recipe, refreshed the page, and verified the app remembered my selection.
