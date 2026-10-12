@@ -7,6 +7,27 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchQuery, setSearchQuery] = useState("pasta")
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const savedFavorites = JSON.parse(localStorage.getItem("favoriteRecipes") || "[]")
+      return Array.isArray(savedFavorites)
+        ? savedFavorites.filter(
+            (favorite) => favorite && typeof favorite === "object" && favorite.idMeal,
+          )
+        : []
+    } catch {
+      return []
+    }
+  })
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("favoriteRecipes", JSON.stringify(favorites))
+    } catch {
+      // Favorites remain usable for this session if localStorage is unavailable.
+    }
+  }, [favorites])
 
   useEffect(() => {
     let isActive = true
@@ -52,6 +73,20 @@ export default function App() {
       }).filter(Boolean)
     : []
 
+  const displayedRecipes = showFavoritesOnly ? favorites : recipes
+
+  function toggleFavorite(recipe) {
+    setFavorites((currentFavorites) =>
+      currentFavorites.some(
+        (favorite) => String(favorite.idMeal) === String(recipe.idMeal),
+      )
+        ? currentFavorites.filter(
+            (favorite) => String(favorite.idMeal) !== String(recipe.idMeal),
+          )
+        : [...currentFavorites, recipe],
+    )
+  }
+
   return (
     <main className="app">
       <header className="app-header">
@@ -84,27 +119,38 @@ export default function App() {
               <p className="eyebrow">Browse</p>
               <h2 id="recipes-title">Recipes</h2>
             </div>
-            {!isLoading && !error && recipes.length > 0 && (
+            {(showFavoritesOnly || (!isLoading && !error)) && displayedRecipes.length > 0 && (
               <span className="recipe-count">
-                {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
+                {displayedRecipes.length} {displayedRecipes.length === 1 ? "recipe" : "recipes"}
               </span>
             )}
           </div>
 
-          {isLoading ? (
+          <button
+            className="favorites-view-toggle"
+            type="button"
+            onClick={() => setShowFavoritesOnly((showing) => !showing)}
+            aria-pressed={showFavoritesOnly}
+          >
+            {showFavoritesOnly ? "Show All" : "Show Favorites"}
+          </button>
+
+          {showFavoritesOnly && displayedRecipes.length === 0 ? (
+            <p className="state-message empty-state">No favorite recipes yet</p>
+          ) : !showFavoritesOnly && isLoading ? (
             <p className="state-message loading-state" role="status">
               <span className="loading-spinner" aria-hidden="true" />
               Loading recipes...
             </p>
-          ) : error ? (
+          ) : !showFavoritesOnly && error ? (
             <p className="state-message error-state" role="alert">
               {error}
             </p>
-          ) : recipes.length === 0 ? (
+          ) : !showFavoritesOnly && recipes.length === 0 ? (
             <p className="state-message empty-state">No recipes found</p>
           ) : (
             <ul className="recipe-list">
-              {recipes.map((recipe) => (
+              {displayedRecipes.map((recipe) => (
                 <li key={recipe.idMeal}>
                   <button
                     className={`recipe-card${selectedRecipe?.idMeal === recipe.idMeal ? " is-selected" : ""}`}
@@ -117,6 +163,13 @@ export default function App() {
                       <span className="recipe-card-name">{recipe.strMeal}</span>
                       <span className="recipe-card-action">View recipe</span>
                     </span>
+                    {(showFavoritesOnly || favorites.some(
+                      (favorite) => String(favorite.idMeal) === String(recipe.idMeal),
+                    )) && (
+                      <span className="favorite-indicator" aria-label="Favorite recipe">
+                        ❤️
+                      </span>
+                    )}
                     <span className="recipe-card-arrow" aria-hidden="true">
                       →
                     </span>
@@ -152,6 +205,20 @@ export default function App() {
                 alt={selectedRecipe.strMeal}
               />
               <h3>{selectedRecipe.strMeal}</h3>
+              <button
+                className={`favorite-button${favorites.some((favorite) => String(favorite.idMeal) === String(selectedRecipe.idMeal)) ? " is-favorite" : ""}`}
+                type="button"
+                onClick={() => toggleFavorite(selectedRecipe)}
+                aria-pressed={favorites.some(
+                  (favorite) => String(favorite.idMeal) === String(selectedRecipe.idMeal),
+                )}
+              >
+                {favorites.some(
+                  (favorite) => String(favorite.idMeal) === String(selectedRecipe.idMeal),
+                )
+                  ? "💔 Remove from Favorites"
+                  : "❤️ Add to Favorites"}
+              </button>
               <h4>Ingredients</h4>
               {ingredients.length > 0 ? (
                 <ul className="ingredient-list">
