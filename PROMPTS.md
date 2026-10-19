@@ -43,3 +43,9 @@ I checked: Clicked the "Watch on YouTube" button in the details panel and verifi
 Prompt: I want to add a bonus feature: saving favorite recipes using localStorage. Please add a favorites state, sync it with useEffect, and add a toggle button in the details panel.
 Agent did: Added state initialized from localStorage, a save effect, and a heart button to toggle favorites.
 I checked: Clicked the favorite button on a recipe, refreshed the page, and verified the app remembered my selection.
+
+## 2026-10-19
+
+**13:24 . copilot**
+
+> Task 1: Migrate the project to TypeScript. Please rename `App.jsx` and any other component files to `.tsx`. Define a strict TypeScript `interface` or `type` for the Recipe object coming from TheMealDB (including idMeal, strMeal, strMealThumb, strYoutube, etc.), and apply it to all `useState` hooks and component props. Ensure there are no `any` types used in the code. Also, please log this exact prompt at the bottom of `PROMPTS.md`. If there is no header for today's date, add `## 2026-10-19`. Then add the timestamp in the format `**HH:MM . copilot**` followed by this prompt text using the `>` quote format

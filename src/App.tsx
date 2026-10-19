@@ -1,19 +1,77 @@
 import { useEffect, useState } from "react"
 import "./App.css"
 
+type IngredientIndex =
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+  | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
+
+type IngredientFields = {
+  [Key in `strIngredient${IngredientIndex}`]?: string | null
+}
+
+type MeasureFields = {
+  [Key in `strMeasure${IngredientIndex}`]?: string | null
+}
+
+interface Recipe extends IngredientFields, MeasureFields {
+  idMeal: string
+  strMeal: string
+  strMealThumb: string
+  strYoutube?: string | null
+  strInstructions?: string | null
+  strCategory?: string | null
+  strArea?: string | null
+  strTags?: string | null
+  strSource?: string | null
+  strImageSource?: string | null
+  strCreativeCommonsConfirmed?: string | null
+  dateModified?: string | null
+}
+
+interface Ingredient {
+  ingredient: string
+  measure: string
+}
+
+function isRecipe(value: unknown): value is Recipe {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  const record = value as Record<string, unknown>
+  if (
+    typeof record.idMeal !== "string" ||
+    typeof record.strMeal !== "string" ||
+    typeof record.strMealThumb !== "string"
+  ) {
+    return false
+  }
+
+  const optionalStringFields = ["strInstructions", "strYoutube"]
+  const ingredientAndMeasureFields = Array.from({ length: 20 }, (_, index) => [
+    `strIngredient${index + 1}`,
+    `strMeasure${index + 1}`,
+  ]).flat()
+
+  return [...optionalStringFields, ...ingredientAndMeasureFields].every((field) => {
+    const fieldValue = record[field]
+    return fieldValue === undefined || fieldValue === null || typeof fieldValue === "string"
+  })
+}
+
 export default function App() {
-  const [recipes, setRecipes] = useState([])
-  const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchQuery, setSearchQuery] = useState("pasta")
-  const [favorites, setFavorites] = useState(() => {
+  const [favorites, setFavorites] = useState<Recipe[]>(() => {
     try {
-      const savedFavorites = JSON.parse(localStorage.getItem("favoriteRecipes") || "[]")
+      const savedFavorites: unknown = JSON.parse(
+        localStorage.getItem("favoriteRecipes") || "[]",
+      )
       return Array.isArray(savedFavorites)
-        ? savedFavorites.filter(
-            (favorite) => favorite && typeof favorite === "object" && favorite.idMeal,
-          )
+        ? savedFavorites.filter((favorite: unknown): favorite is Recipe => isRecipe(favorite))
         : []
     } catch {
       return []
@@ -42,13 +100,25 @@ export default function App() {
           throw new Error("Unable to load recipes. Please try again.")
         }
 
-        const data = await response.json()
+        const data: unknown = await response.json()
         if (isActive) {
-          setRecipes(data.meals ?? [])
+          const meals =
+            typeof data === "object" && data !== null && "meals" in data
+              ? data.meals
+              : undefined
+          setRecipes(
+            Array.isArray(meals)
+              ? meals.filter((meal: unknown): meal is Recipe => isRecipe(meal))
+              : [],
+          )
         }
       } catch (fetchError) {
         if (isActive) {
-          setError(fetchError.message || "Unable to load recipes.")
+          setError(
+            fetchError instanceof Error
+              ? fetchError.message
+              : "Unable to load recipes.",
+          )
         }
       } finally {
         if (isActive) {
@@ -64,18 +134,20 @@ export default function App() {
     }
   }, [searchQuery])
 
-  const ingredients = selectedRecipe
+  const ingredients: Ingredient[] = selectedRecipe
     ? Array.from({ length: 20 }, (_, index) => {
-        const ingredient = selectedRecipe[`strIngredient${index + 1}`]?.trim()
-        const measure = selectedRecipe[`strMeasure${index + 1}`]?.trim()
+        const ingredientField = `strIngredient${index + 1}` as `strIngredient${IngredientIndex}`
+        const measureField = `strMeasure${index + 1}` as `strMeasure${IngredientIndex}`
+        const ingredient = selectedRecipe[ingredientField]?.trim()
+        const measure = selectedRecipe[measureField]?.trim()
 
-        return ingredient ? { ingredient, measure } : null
-      }).filter(Boolean)
+        return ingredient ? { ingredient, measure: measure || "" } : null
+      }).filter((ingredient): ingredient is Ingredient => ingredient !== null)
     : []
 
   const displayedRecipes = showFavoritesOnly ? favorites : recipes
 
-  function toggleFavorite(recipe) {
+  function toggleFavorite(recipe: Recipe): void {
     setFavorites((currentFavorites) =>
       currentFavorites.some(
         (favorite) => String(favorite.idMeal) === String(recipe.idMeal),
