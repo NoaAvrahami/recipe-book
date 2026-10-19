@@ -59,3 +59,8 @@ I checked: Clicked the favorite button on a recipe, refreshed the page, and veri
 > 3. `/favorites` : A dedicated page displaying recipes saved in localStorage.
 > 4. `/random` : A new extra page with a button that fetches and displays a random recipe from `[https://www.themealdb.com/api/json/v1/1/random.php](https://www.themealdb.com/api/json/v1/1/random.php)`.
 > Also, please log this exact prompt at the bottom of `PROMPTS.md` under today's date (2026-10-19), adding the timestamp `**HH:MM . copilot**`
+
+**22:33 . copilot**
+
+> Task 3: Add unit tests using Vitest. Please install `vitest` and `@vitest/ui`, and add a `"test:ui": "vitest --ui"` script to `package.json`. Create a test file (e.g., `logic.test.ts` or similar) and write at least 5 passing unit tests. The tests must check actual logic, not just rendering (for example: test a pure function that filters recipes by search query, or test the logic that toggles a favorite recipe ID in an array).
+> Also, please log this exact prompt at the bottom of `PROMPTS.md` under today's date (2026-10-19), adding the timestamp `**HH:MM . copilot**`

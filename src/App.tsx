@@ -6,34 +6,9 @@ import {
   Routes,
   useParams,
 } from "react-router-dom"
+import { filterRecipesByQuery, toggleFavoriteRecipe } from "./recipeLogic"
+import type { IngredientIndex, Recipe } from "./recipeTypes"
 import "./App.css"
-
-type IngredientIndex =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-  | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
-
-type IngredientFields = {
-  [Key in `strIngredient${IngredientIndex}`]?: string | null
-}
-
-type MeasureFields = {
-  [Key in `strMeasure${IngredientIndex}`]?: string | null
-}
-
-interface Recipe extends IngredientFields, MeasureFields {
-  idMeal: string
-  strMeal: string
-  strMealThumb: string
-  strYoutube?: string | null
-  strInstructions?: string | null
-  strCategory?: string | null
-  strArea?: string | null
-  strTags?: string | null
-  strSource?: string | null
-  strImageSource?: string | null
-  strCreativeCommonsConfirmed?: string | null
-  dateModified?: string | null
-}
 
 interface Ingredient {
   ingredient: string
@@ -115,11 +90,7 @@ function App() {
   }, [favorites])
 
   function toggleFavorite(recipe: Recipe): void {
-    setFavorites((currentFavorites) =>
-      currentFavorites.some((favorite) => favorite.idMeal === recipe.idMeal)
-        ? currentFavorites.filter((favorite) => favorite.idMeal !== recipe.idMeal)
-        : [...currentFavorites, recipe],
-    )
+    setFavorites((currentFavorites) => toggleFavoriteRecipe(currentFavorites, recipe))
   }
 
   return (
@@ -191,6 +162,8 @@ function HomePage() {
     return () => { isActive = false }
   }, [searchQuery])
 
+  const displayedRecipes = filterRecipesByQuery(recipes, searchQuery)
+
   return (
     <>
       <section className="search-field home-search">
@@ -206,18 +179,18 @@ function HomePage() {
       <section className="panel recipe-list-panel" aria-labelledby="recipes-title">
         <div className="panel-heading">
           <div><p className="eyebrow">Browse</p><h2 id="recipes-title">Recipes</h2></div>
-          {!isLoading && !error && recipes.length > 0 && (
-            <span className="recipe-count">{recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}</span>
+          {!isLoading && !error && displayedRecipes.length > 0 && (
+            <span className="recipe-count">{displayedRecipes.length} {displayedRecipes.length === 1 ? "recipe" : "recipes"}</span>
           )}
         </div>
         {isLoading ? (
           <p className="state-message loading-state" role="status"><span className="loading-spinner" aria-hidden="true" />Loading recipes...</p>
         ) : error ? (
           <p className="state-message error-state" role="alert">{error}</p>
-        ) : recipes.length === 0 ? (
+        ) : displayedRecipes.length === 0 ? (
           <p className="state-message empty-state">No recipes found</p>
         ) : (
-          <RecipeList recipes={recipes} />
+          <RecipeList recipes={displayedRecipes} />
         )}
       </section>
     </>
