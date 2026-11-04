@@ -54,7 +54,7 @@ I checked: Resized the browser window and verified the layout stacks vertically 
 
 ## Add YouTube Link
 Prompt: The instructor requested that a YouTube video link be displayed. Please check if selectedRecipe.strYoutube exists and add a link at the bottom.
-Agent did: Added an <a> tag pointing to the YouTube URL that opens in a new tab.
+Agent did: Added an tag pointing to the YouTube URL that opens in a new tab.
 I checked: Clicked the "Watch on YouTube" button in the details panel and verified it opened the correct video.
 
 ## 2026-10-12
@@ -70,23 +70,23 @@ I checked: Clicked the favorite button on a recipe, refreshed the page, and veri
 
 **13:24 . copilot**
 
-> Task 1: Migrate the project to TypeScript. Please rename `App.jsx` and any other component files to `.tsx`. Define a strict TypeScript `interface` or `type` for the Recipe object coming from TheMealDB (including idMeal, strMeal, strMealThumb, strYoutube, etc.), and apply it to all `useState` hooks and component props. Ensure there are no `any` types used in the code. Also, please log this exact prompt at the bottom of `PROMPTS.md`. If there is no header for today's date, add `## 2026-10-19`. Then add the timestamp in the format `**HH:MM . copilot**` followed by this prompt text using the `>` quote forma
+ Task 1: Migrate the project to TypeScript. Please rename `App.jsx` and any other component files to `.tsx`. Define a strict TypeScript `interface` or `type` for the Recipe object coming from TheMealDB (including idMeal, strMeal, strMealThumb, strYoutube, etc.), and apply it to all `useState` hooks and component props. Ensure there are no `any` types used in the code. Also, please log this exact prompt at the bottom of `PROMPTS.md`. If there is no header for today's date, add `## 2026-10-19`. Then add the timestamp in the format `**HH:MM . copilot**` followed by this prompt text using the `>` quote forma
 
 **13:37 . copilot**
 
-> Task 2: Implement `react-router-dom`. Please install the package. Refactor the app to use a `<BrowserRouter>` with a Navigation bar (`<nav>`) containing `NavLink` elements. Create the following routes:
->
-> 1. `/` : Home page (showing the search input and the recipe list).
-> 2. `/recipe/:id` : Details page (use `useParams` to fetch and show details for a specific recipe).
-> 3. `/favorites` : A dedicated page displaying recipes saved in localStorage.
-> 4. `/random` : A new extra page with a button that fetches and displays a random recipe from `[https://www.themealdb.com/api/json/v1/1/random.php](https://www.themealdb.com/api/json/v1/1/random.php)`.
-> Also, please log this exact prompt at the bottom of `PROMPTS.md` under today's date (2026-10-19), adding the timestamp `**HH:MM . copilot**`
+ Task 2: Implement `react-router-dom`. Please install the package. Refactor the app to use a `<BrowserRouter>` with a Navigation bar (`<nav>`) containing `NavLink` elements. Create the following routes:
+
+ 1. `/` : Home page (showing the search input and the recipe list).
+ 2. `/recipe/:id` : Details page (use `useParams` to fetch and show details for a specific recipe).
+ 3. `/favorites` : A dedicated page displaying recipes saved in localStorage.
+ 4. `/random` : A new extra page with a button that fetches and displays a random recipe from `[https://www.themealdb.com/api/json/v1/1/random.php](https://www.themealdb.com/api/json/v1/1/random.php)`.
+ Also, please log this exact prompt at the bottom of `PROMPTS.md` under today's date (2026-10-19), adding the timestamp `**HH:MM . copilot**`
 
 **22:33 . copilot**
 
-> Task 3: Add unit tests using Vitest. Please install `vitest` and `@vitest/ui`, and add a `"test:ui": "vitest --ui"` script to `package.json`. Create a test file (e.g., `logic.test.ts` or similar) and write at least 5 passing unit tests. The tests must check actual logic, not just rendering (for example: test a pure function that filters recipes by search query, or test the logic that toggles a favorite recipe ID in an array).
-> Also, please log this exact prompt at the bottom of `PROMPTS.md` under today's date (2026-10-19), adding the timestamp `**HH:MM . copilot**`
+ Task 3: Add unit tests using Vitest. Please install `vitest` and `@vitest/ui`, and add a `"test:ui": "vitest --ui"` script to `package.json`. Create a test file (e.g., `logic.test.ts` or similar) and write at least 5 passing unit tests. The tests must check actual logic, not just rendering (for example: test a pure function that filters recipes by search query, or test the logic that toggles a favorite recipe ID in an array).
+ Also, please log this exact prompt at the bottom of `PROMPTS.md` under today's date (2026-10-19), adding the timestamp `**HH:MM . copilot**`
 
 **22:56 . copilot**
 
-> "My instructor requires at least 4 custom components, each in its own separate file, in addition to the page components. Currently, all the UI and routing is stuffed inside `App.tsx`. Please refactor the code. Create separate `.tsx` files inside `src` (or inside `src/components` and `src/pages`) for components like `Navbar`, `RecipeCard`, `SearchBar`, and for the pages like `Home`, `Favorites`, `RandomRecipe`, and `RecipeDetails`. Update `App.tsx` to simply import and route between them. Keep all existing functionality intact. Finally, log this exact prompt in `PROMPTS.md`.
+ "My instructor requires at least 4 custom components, each in its own separate file, in addition to the page components. Currently, all the UI and routing is stuffed inside `App.tsx`. Please refactor the code. Create separate `.tsx` files inside `src` (or inside `src/components` and `src/pages`) for components like `Navbar`, `RecipeCard`, `SearchBar`, and for the pages like `Home`, `Favorites`, `RandomRecipe`, and `RecipeDetails`. Update `App.tsx` to simply import and route between them. Keep all existing functionality intact. Finally, log this exact prompt in `PROMPTS.md`.
