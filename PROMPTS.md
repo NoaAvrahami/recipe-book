@@ -90,3 +90,9 @@ I checked: Clicked the favorite button on a recipe, refreshed the page, and veri
 **22:56 . copilot**
 
  "My instructor requires at least 4 custom components, each in its own separate file, in addition to the page components. Currently, all the UI and routing is stuffed inside `App.tsx`. Please refactor the code. Create separate `.tsx` files inside `src` (or inside `src/components` and `src/pages`) for components like `Navbar`, `RecipeCard`, `SearchBar`, and for the pages like `Home`, `Favorites`, `RandomRecipe`, and `RecipeDetails`. Update `App.tsx` to simply import and route between them. Keep all existing functionality intact. Finally, log this exact prompt in `PROMPTS.md`.
+
+## 2026-11-05
+
+**20:09 . copilot**
+
+ Removed the unused search logic from `src/recipeLogic.ts`. Refactored the tests to focus exclusively on the core `toggleFavoriteRecipe` Favorites logic and state immutability, with exactly five cases covering empty-list addition, addition to existing favorites, removal, removing the last favorite, and preserving the original array.

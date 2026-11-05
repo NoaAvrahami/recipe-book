@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { filterRecipesByQuery } from "../recipeLogic"
 import { fetchRecipes } from "../recipeApi"
 import RecipeList from "../components/RecipeList"
 import SearchBar from "../components/SearchBar"
@@ -35,17 +34,15 @@ export default function Home() {
     return () => { isActive = false }
   }, [searchQuery])
 
-  const displayedRecipes = filterRecipesByQuery(recipes, searchQuery)
-
   return (
     <>
       <SearchBar query={searchQuery} onQueryChange={setSearchQuery} />
       <section className="panel recipe-list-panel" aria-labelledby="recipes-title">
         <div className="panel-heading">
           <div><p className="eyebrow">Browse</p><h2 id="recipes-title">Recipes</h2></div>
-          {!isLoading && !error && displayedRecipes.length > 0 && (
+          {!isLoading && !error && recipes.length > 0 && (
             <span className="recipe-count">
-              {displayedRecipes.length} {displayedRecipes.length === 1 ? "recipe" : "recipes"}
+              {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
             </span>
           )}
         </div>
@@ -53,10 +50,10 @@ export default function Home() {
           <p className="state-message loading-state" role="status"><span className="loading-spinner" aria-hidden="true" />Loading recipes...</p>
         ) : error ? (
           <p className="state-message error-state" role="alert">{error}</p>
-        ) : displayedRecipes.length === 0 ? (
+        ) : recipes.length === 0 ? (
           <p className="state-message empty-state">No recipes found</p>
         ) : (
-          <RecipeList recipes={displayedRecipes} />
+          <RecipeList recipes={recipes} />
         )}
       </section>
     </>
